@@ -1,4 +1,4 @@
-"""Contains auxiliaries functions for use with the Jupyter notebook."""
+"""Contains auxiliaries functions for use with the Jupyter notebook: EDA.ipynb"""
 import pandas as pd
 import numpy as np
 import itertools as it
@@ -125,4 +125,69 @@ def check_info_in_decimals(aSeries: pd.Series) -> bool:
     result = ((aSeries % 1 != 0) & ~(aSeries.isna())).sum()
     # is the previous sum greater than 0?
     result = 0 < result
+    return result
+
+
+def fix_data_for_a_category(aDataFrameColumn: pd.Series, column_name: str) -> pd.Series:
+    """Turn a column into a category, log process to console."""
+    print(f'Fitting data type for column: \'{column_name}\'')
+    print(f'\tcardinality: {aDataFrameColumn.nunique()}')
+    print('\tdue to context as category, casting to \'category\'')
+    return aDataFrameColumn.astype('category')
+
+
+def fix_data_types(aDataFrame: pd.DataFrame, price_col: str = 'price', year_col: str = 'model_year', model_col: str = 'model',
+                   condition_col: str = 'condition', cylinders_col: str = 'cylinders', fuel_col: str = 'fuel', odometer_col: str = 'odometer',
+                   transmission_col: str = 'transmission', type_col: str = 'type', color_col: str = 'paint_color', data_col: str = 'date_posted',
+                   days_col: str = 'days_listed') -> pd.DataFrame:
+    """Fix the data types of the dataframe to better suit its context and contents."""
+    result = aDataFrame.copy()
+    # Fix price
+    print(f'Fitting data type for column: \'{price_col}\'')
+    print(
+        f'\tmin: {result[price_col].min()}\tmax: {result[price_col].max()}')
+    print(f'\trequires negative values?: {(result[price_col].min() < 0)}')
+    print('\tdue to monetary context, casting to \'float32\'')
+    result[price_col] = result[price_col].astype('float32')
+    # Fix year
+    print(f'Fitting data type for column: \'{year_col}\'')
+    print(
+        f'\tmin: {result[year_col].min()}\tmax: {result[year_col].max()}')
+    print(f'\trequires negative values?: {(result[year_col].min() < 0)}')
+    print(
+        f'\trequires decimal part?: {check_info_in_decimals(result[year_col])}')
+    print('\tdue to context as year, casting to \'uint16\'')
+    result[year_col] = result[year_col].astype('uint16')
+    # Fix model
+    result[model_col] = fix_data_for_a_category(result[model_col], model_col)
+    # Fix condition
+    result[condition_col] = fix_data_for_a_category(
+        result[condition_col], condition_col)
+    # Fix cylinders
+    print(f'Fitting data type for column: \'{cylinders_col}\'')
+    print(
+        f'\tmin: {result[cylinders_col].min()}\tmax: {result[cylinders_col].max()}')
+    print(f'\trequires negative values?: {(result[cylinders_col].min() < 0)}')
+    print(
+        f'\trequires decimal part?: {check_info_in_decimals(result[cylinders_col])}')
+    print('\tdue to context as a whole positive number, casting to \'uint8\'')
+    result[cylinders_col] = result[cylinders_col].astype('uint8')
+    # Fix fuel
+    result[fuel_col] = fix_data_for_a_category(result[fuel_col], fuel_col)
+    # Fix odometer
+    print(f'Fitting data type for column: \'{odometer_col}\'')
+    print(
+        f'\tmin: {result[odometer_col].min()}\tmax: {result[odometer_col].max()}')
+    print(f'\trequires negative values?: {(result[odometer_col].min() < 0)}')
+    print(
+        f'\trequires decimal part?: {check_info_in_decimals(result[odometer_col])}')
+    print('\tdue to context as a fractional value, casting to \'float32\'')
+    result[odometer_col] = result[odometer_col].astype('float32')
+    # Fix transmission
+    result[transmission_col] = fix_data_for_a_category(
+        result[transmission_col], transmission_col)
+    # Fix type
+    result[type_col] = fix_data_for_a_category(result[type_col], type_col)
+    # Fix color
+    result[color_col] = fix_data_for_a_category(result[color_col], color_col)
     return result

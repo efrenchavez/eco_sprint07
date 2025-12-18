@@ -1,0 +1,14 @@
+columns:
+  condition: category
+  cylinders: uint8
+  date_posted: datetime64[ns]
+  days_listed: uint16
+  fuel: category
+  model: category
+  model_year: uint16
+  odometer: float32
+  paint_color: category
+  price: float32
+  transmission: category
+  type: category
+date_format: '%Y-%m-%d'

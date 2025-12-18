@@ -1,4 +1,5 @@
 """Contains auxiliaries functions for use with the Jupyter notebook: EDA.ipynb"""
+import yaml
 import pandas as pd
 import numpy as np
 import itertools as it
@@ -148,12 +149,12 @@ def print_data_for_numeric(a_data_frame: pd.DataFrame, column_name: str) -> None
         f'\trequires decimal part?: {check_info_in_decimals(a_data_frame[column_name])}')
 
 
-def fix_data_types(aDataFrame: pd.DataFrame, price_col: str = 'price', year_col: str = 'model_year', model_col: str = 'model',
+def fix_data_types(a_data_frame: pd.DataFrame, price_col: str = 'price', year_col: str = 'model_year', model_col: str = 'model',
                    condition_col: str = 'condition', cylinders_col: str = 'cylinders', fuel_col: str = 'fuel', odometer_col: str = 'odometer',
                    transmission_col: str = 'transmission', type_col: str = 'type', color_col: str = 'paint_color', date_col: str = 'date_posted',
                    days_col: str = 'days_listed') -> pd.DataFrame:
     """Fix the data types of the dataframe to better suit its context and contents."""
-    result = aDataFrame.copy()
+    result = a_data_frame.copy()
     # there are no ordinal categoricals, so I can jam all the categorical conversion in one for loop
     # since they don't require custom processing or output
     categorical_columns = [model_col, condition_col,
@@ -191,3 +192,34 @@ def fix_data_types(aDataFrame: pd.DataFrame, price_col: str = 'price', year_col:
     print('\tdue to context as datetime, casting to \'datetime64[ns]\'')
     result[date_col] = pd.to_datetime(result[date_col], format='%Y-%m-%d')
     return result
+
+
+def export_clean_data(a_data_frame: pd.DataFrame, full_path_to_csv_file: str, full_path_to_yaml_file) -> None:
+    """Write clean data to a csv and data type dict to a YAML"""
+    print(f'Exporting dataframe to file: \'{full_path_to_csv_file}\'')
+    try:
+        a_data_frame.to_csv(full_path_to_csv_file)
+        print(f'\t{full_path_to_csv_file} created successfully.')
+    except FileNotFoundError:
+        print(f'Error creating file: {full_path_to_csv_file}')
+    except:
+        print('Error saving clean data to file.')
+    print('Creating data types correction dictionary...')
+    # now create the YAML
+    # .dtypes gets me a series,
+    # apply will get me only the names of the dtypes,
+    # to dict will make it a directory
+    dtype_dictionary = a_data_frame.dtypes.apply(lambda x: x.name).to_dict()
+    output_dictionary = {}
+    output_columns = {}
+    for column, type in dtype_dictionary.items():
+        print(f'\tcolumn: \'{column}\', is of type: \'{type}\'')
+        output_columns[column] = type
+    output_dictionary = {'columns': output_columns}
+    print('Datetime format for the only date column is \'%Y-%m-%d\'')
+    output_dictionary['date_format'] = '%Y-%m-%d'
+    print('Output dictionary preview:')
+    print(output_dictionary)
+    # save to file
+    with open(full_path_to_yaml_file, 'w') as file:
+        yaml.dump(output_dictionary, file, default_flow_style=False, indent=2)

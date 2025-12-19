@@ -90,7 +90,6 @@ def get_path_to_utils() -> Literal['utils/', None]:
 
 def load_clean_data_into_main() -> pd.DataFrame:
     """Build a dataframe using clean data."""
-    print(get_path_to_clean_csv_for_main())
     result = pd.read_csv(get_path_to_clean_csv_for_main(), index_col=0)
     with open(get_path_to_dtypes_yaml_for_main(), 'r', encoding='utf8') as dtypes_file:
         try:

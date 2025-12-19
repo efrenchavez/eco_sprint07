@@ -206,9 +206,9 @@ def export_clean_data(a_data_frame: pd.DataFrame, full_path_to_csv_file: str, fu
         print('Error saving clean data to file.')
     print('Creating data types correction dictionary...')
     # now create the YAML
-    # .dtypes gets me a series,
-    # apply will get me only the names of the dtypes,
-    # to dict will make it a directory
+    # .dtypes gets me a series: column names as index, dtypes as values
+    # .apply with that lambda over the series will get me only the names of the dtypes,
+    # .to_dict will make it a dictionary that I can easily drop into a yaml
     dtype_dictionary = a_data_frame.dtypes.apply(lambda x: x.name).to_dict()
     output_dictionary = {}
     output_columns = {}

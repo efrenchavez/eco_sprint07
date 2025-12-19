@@ -1,3 +1,6 @@
+# generated using the command:
+# pip freeze > requirements.txt
+# so as to more accurately represent the project's requirements
 altair==6.0.0
 astroid==4.0.2
 asttokens==3.0.1

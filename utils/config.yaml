@@ -3,10 +3,16 @@
 # where is the dataset and what's its name? 
   dataset:
     filename: 'vehicles_us.csv'
-    path: 'data/'
+    path: './data/'
 # where are the jupyter notebooks?
   notebooks:
-    path: 'notebooks/'
+    path: './notebooks/'
 # where are the project's support modules?
   utils:
-    path: 'utils/'
+    path: './utils/'
+# where is the CLEAN dataset and what's its name?
+# what yaml file contains the information about dtypes?
+  clean_dataset:
+    filename: 'clean_vehicles_us.csv'
+    dtypes_yaml: 'clean_vehicles_us_dtypes.yaml'
+    path: './data/'
